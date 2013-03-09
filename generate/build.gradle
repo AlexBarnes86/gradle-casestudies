@@ -1,0 +1,25 @@
+apply plugin: 'java'
+
+sourceSets {
+	generated
+}
+
+task generate(type: JavaExec, dependsOn: compileJava) {
+	main = 'com.toastedbits.gradletest.generator.Generator'
+	classpath = sourceSets.main.runtimeClasspath
+}
+
+compileGeneratedJava.dependsOn(generate)
+
+task runGenerated(type: JavaExec, dependsOn: compileGeneratedJava) {
+	main = 'com.toastedbits.gradletest.generated.Generated'
+	classpath = sourceSets.generated.runtimeClasspath
+}
+
+jar {
+	from sourceSets.generated.output
+	excludes = ['com/toastedbits/gradletest/generator/**']
+	manifest {
+		attributes 'Main-Class':'com.toastedbits.gradletest.generated.Generated'
+	}
+}
